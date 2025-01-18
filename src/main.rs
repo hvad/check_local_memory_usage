@@ -5,9 +5,9 @@ use std::process;
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
 struct Args {
-    #[arg(short, long)]
+    #[arg(short = 'c', long, default_value = "75")]
     critical: u8,
-    #[arg(short, long)]
+    #[arg(short = 'w', long, default_value = "50")]
     warning: u8,
 }
 
