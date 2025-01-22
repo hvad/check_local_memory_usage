@@ -3,7 +3,7 @@ use psutil::memory;
 use std::process;
 
 #[derive(Parser, Debug)]
-#[command(author, version, about)]
+#[command(author = "David Hannequin", version = "1.0", about = "Check percent usage memory.")]
 struct Args {
     #[arg(short = 'c', long, default_value = "75")]
     critical: u8,
