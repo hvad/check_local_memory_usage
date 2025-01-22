@@ -13,21 +13,24 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let virtual_memory = memory::virtual_memory().unwrap();
-    let memory_usage = virtual_memory.percent() as u8;
+    let memory_usage = memory::virtual_memory()
+        .expect("Failed to retrieve memory information")
+        .percent() as u8;
 
-    match memory_usage {
+    let status = match memory_usage {
         usage if usage > args.critical => {
             println!("CRITICAL - Memory usage {}%", usage);
-            process::exit(2);
+            2
         }
         usage if usage > args.warning => {
             println!("WARNING - Memory usage {}%", usage);
-            process::exit(1);
+            1
         }
         _ => {
             println!("OK - Memory usage {}%", memory_usage);
-            process::exit(0);
+            0
         }
-    }
+    };
+
+    process::exit(status);
 }
