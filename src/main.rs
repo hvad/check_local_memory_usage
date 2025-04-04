@@ -18,12 +18,10 @@ fn main() {
         Ok(mem) => {
             let usage = mem.percent() as u8;
 
-            let (status, message) = if usage > args.critical {
-                (2, format!("CRITICAL - Memory usage {}%", usage))
-            } else if usage > args.warning {
-                (1, format!("WARNING - Memory usage {}%", usage))
-            } else {
-                (0, format!("OK - Memory usage {}%", usage))
+            let (status, message) = match usage {
+                _ if usage > args.critical => (2, format!("CRITICAL - Memory usage {}%", usage)),
+                _ if usage > args.warning => (1, format!("WARNING - Memory usage {}%", usage)),
+                _ => (0, format!("OK - Memory usage {}%", usage)),
             };
 
             println!("{}", message);
@@ -31,7 +29,7 @@ fn main() {
         }
         Err(e) => {
             eprintln!("ERROR - Failed to retrieve memory information: {}", e);
-            process::exit(3); // unknown error code.
+            process::exit(3); // Unknown error code 
         }
     }
 }
