@@ -13,24 +13,25 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let memory_usage = memory::virtual_memory()
-        .expect("Failed to retrieve memory information")
-        .percent() as u8;
 
-    let status = match memory_usage {
-        usage if usage > args.critical => {
-            println!("CRITICAL - Memory usage {}%", usage);
-            2
-        }
-        usage if usage > args.warning => {
-            println!("WARNING - Memory usage {}%", usage);
-            1
-        }
-        _ => {
-            println!("OK - Memory usage {}%", memory_usage);
-            0
-        }
-    };
+    match memory::virtual_memory() {
+        Ok(mem) => {
+            let usage = mem.percent() as u8;
 
-    process::exit(status);
+            let (status, message) = if usage > args.critical {
+                (2, format!("CRITICAL - Memory usage {}%", usage))
+            } else if usage > args.warning {
+                (1, format!("WARNING - Memory usage {}%", usage))
+            } else {
+                (0, format!("OK - Memory usage {}%", usage))
+            };
+
+            println!("{}", message);
+            process::exit(status);
+        }
+        Err(e) => {
+            eprintln!("ERROR - Failed to retrieve memory information: {}", e);
+            process::exit(3); // unknown error code.
+        }
+    }
 }
