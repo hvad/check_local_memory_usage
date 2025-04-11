@@ -1,14 +1,15 @@
 name: Release Linux Binary
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*' # Trigger on tags like v1.0.0
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Ajoute cette ligne pour les autorisations d'écriture
 
     steps:
       - name: Checkout code
@@ -23,10 +24,21 @@ jobs:
       - name: Build binary
         run: cargo build --release --target x86_64-unknown-linux-gnu
 
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
       - name: Upload binary to release
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./target/x86_64-unknown-linux-gnu/release/check_local_memory_usage
           asset_name: check_local_memory_usage-linux-x86_64
           asset_content_type: application/octet-stream
