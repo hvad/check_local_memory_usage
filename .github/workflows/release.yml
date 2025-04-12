@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write 
+      contents: write # Ajoute cette ligne pour les autorisations d'écriture
 
     steps:
       - name: Checkout code
@@ -37,11 +37,12 @@ jobs:
 
       - name: Set upload_url output
         run: echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+        id: set_output
 
       - name: Upload binary to release
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ env.upload_url }} 
+          upload_url: ${{ steps.set_output.outputs.upload_url }}
           asset_path: ./target/x86_64-unknown-linux-gnu/release/check_local_memory_usage
           asset_name: check_local_memory_usage-linux-x86_64
           asset_content_type: application/octet-stream
