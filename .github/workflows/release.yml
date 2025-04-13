@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Ajoute cette ligne pour les autorisations d'écriture
+      contents: write 
 
     steps:
       - name: Checkout code
