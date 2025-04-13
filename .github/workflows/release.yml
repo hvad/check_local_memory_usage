@@ -41,6 +41,8 @@ jobs:
 
       - name: Upload binary to release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.set_output.outputs.upload_url }}
           asset_path: ./target/x86_64-unknown-linux-gnu/release/check_local_memory_usage
